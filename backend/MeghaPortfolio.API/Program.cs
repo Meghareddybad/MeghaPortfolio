@@ -54,7 +54,7 @@ builder.Services.AddSwaggerGen(options =>
         Contact = new OpenApiContact
         {
             Name = "Megha Syam Reddy Badhuri",
-            Email = "meghasyamreddy7@gmail.com",
+            Email = "meghasyamreddy.dev@gmail.com",
             Url = new Uri("https://www.linkedin.com/in/megha-syam-reddy-badhuri-79531914b")
         }
     });

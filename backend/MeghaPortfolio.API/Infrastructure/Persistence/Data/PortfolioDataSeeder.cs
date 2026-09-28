@@ -9,8 +9,9 @@ public static class PortfolioDataSeeder
         // Ensure Database is Created
         context.Database.EnsureCreated();
 
-        // 1. Seed Profile if empty
-        if (!context.Profiles.Any())
+        // 1. Seed or Update Profile
+        var existingProfile = context.Profiles.FirstOrDefault();
+        if (existingProfile == null)
         {
             context.Profiles.Add(new ProfileEntity
             {
@@ -18,7 +19,7 @@ public static class PortfolioDataSeeder
                 Title = "Senior .NET & Backend Engineer",
                 Summary = "Results-driven Senior .NET & Backend Engineer with nearly 5 years of experience designing, developing, and scaling high-performance microservices, RESTful APIs, and distributed backend systems. Proficient in C#, .NET Core, Web API, .NET Framework, Multithreading (TPL), SQL Server, PostgreSQL, and MongoDB (NoSQL). Strong background in SOLID principles, Design Patterns, TDD with NUnit, and Kafka event streaming.",
                 Location = "Hyderabad, India",
-                Email = "meghasyamreddy7@gmail.com",
+                Email = "meghasyamreddy.dev@gmail.com",
                 Phone = "+91 9491364416",
                 LinkedInUrl = "https://www.linkedin.com/in/megha-syam-reddy-badhuri-79531914b",
                 GitHubUrl = "https://github.com/meghasyamreddy",
@@ -26,6 +27,11 @@ public static class PortfolioDataSeeder
                 LatencyReductionMetric = "95% Processing Latency Reduction via TPL Concurrency",
                 TestCoverageMetric = "85%+ Automated Unit Test Coverage (NUnit/TDD)"
             });
+        }
+        else
+        {
+            // Update email to preferred developer contact email
+            existingProfile.Email = "meghasyamreddy.dev@gmail.com";
         }
 
         // 2. Seed Experience if empty
