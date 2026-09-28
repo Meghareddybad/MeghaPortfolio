@@ -70,5 +70,24 @@ This document lists common issues, root cause diagnoses, and exact resolution st
     ]
   }
   ```
-* **Verification:** Tested page refresh on Vercel deployment URL `https://megha-portfolio-1jfs.vercel.app/`.
+---
+
+### Issue 7: Mobile Contact Form Submission Issue
+* **Problem:** Mobile users accessing the deployed website on phones (Mobile Safari iOS, Chrome Android over mobile carrier networks) were unable to submit the contact form, while local desktop testing succeeded.
+* **Root Cause:**
+  1. **CORS Origin Policy Mismatch**: `Program.cs` CORS policy hardcoded `http://localhost:5173`, `http://localhost:3000`, and `https://meghaportfolio.pages.dev`, but was missing the production Vercel frontend origin `https://megha-portfolio-1jfs.vercel.app`. Mobile browsers strictly enforce preflight `OPTIONS` checks for `application/json` `POST` requests and blocked the call.
+  2. **Short Axios Timeout on Render Cold Starts**: `api.js` Axios client timeout was set to `10000` (10 seconds). Render.com free-tier containers spin down after 15 minutes of inactivity and take 20–45 seconds to cold-start. When mobile users tapped submit after idle, Axios aborted prematurely with `ECONNABORTED`.
+* **Fix**:
+  1. Added `https://megha-portfolio-1jfs.vercel.app` and wildcard `.SetIsOriginAllowed(origin => host.EndsWith("vercel.app") ...)` to `Program.cs` CORS builder configuration.
+  2. Increased Axios timeout from `10000` to `30000` (30 seconds) in `frontend/megha-portfolio-ui/src/services/api.js`.
+  3. Added mobile input attributes (`autoComplete="email"`, `inputMode="email"`) and user-friendly error messages in `ContactForm.jsx`.
+* **Files Changed**:
+  - `backend/MeghaPortfolio.API/Program.cs`
+  - `frontend/megha-portfolio-ui/src/services/api.js`
+  - `frontend/megha-portfolio-ui/src/components/ContactForm.jsx`
+  - `docs/21-troubleshooting.md`
+* **Why Desktop Worked**: Local desktop testing used `http://localhost:5173` (which matched the dev CORS origin list) or had active backend connections that prevented cold-start timeouts.
+* **Testing**: Verified with `dotnet test` (6/6 pass), `npm run build` (0 errors), and live POST request to production endpoint `https://megha-portfolio-api-hbb8.onrender.com/api/contact`.
+* **Prevention**: Always configure dynamic CORS origin matching (`SetIsOriginAllowed`) for production frontend hosts, and set adequate timeouts for serverless / auto-scaling backend cold starts.
+
 

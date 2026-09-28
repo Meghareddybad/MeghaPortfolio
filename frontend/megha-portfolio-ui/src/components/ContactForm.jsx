@@ -23,7 +23,12 @@ export default function ContactForm() {
       setStatus({ loading: false, success: true, error: null });
       setFormData({ senderName: '', senderEmail: '', subject: '', message: '' });
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to submit message. Please try again.';
+      let errorMsg = 'Unable to send your message. Please try again.';
+      if (err.code === 'ECONNABORTED') {
+        errorMsg = 'The request took too long to reach the server. Please try again.';
+      } else if (err.response?.data?.message) {
+        errorMsg = err.response.data.message;
+      }
       setStatus({ loading: false, success: false, error: errorMsg });
     }
   };
@@ -70,6 +75,7 @@ export default function ContactForm() {
                     value={formData.senderName}
                     onChange={handleChange}
                     required
+                    autoComplete="name"
                     placeholder="e.g. Technical Recruiter"
                     style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.95rem' }}
                   />
@@ -82,6 +88,8 @@ export default function ContactForm() {
                     value={formData.senderEmail}
                     onChange={handleChange}
                     required
+                    autoComplete="email"
+                    inputMode="email"
                     placeholder="e.g. recruiter@company.com"
                     style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: '#fff', fontSize: '0.95rem' }}
                   />

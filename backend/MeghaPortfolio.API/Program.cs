@@ -34,8 +34,22 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
                 "http://localhost:5173",  // Vite Dev Server
                 "http://localhost:3000",  // React Standard Dev Server
+                "https://megha-portfolio-1jfs.vercel.app", // Production Vercel Frontend URL
                 "https://meghaportfolio.pages.dev" // Production Cloudflare Pages URL
               )
+              .SetIsOriginAllowed(origin =>
+              {
+                  if (string.IsNullOrEmpty(origin)) return false;
+                  try
+                  {
+                      var host = new Uri(origin).Host;
+                      return host == "localhost" || host.EndsWith("vercel.app") || host.EndsWith("pages.dev");
+                  }
+                  catch
+                  {
+                      return false;
+                  }
+              })
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
