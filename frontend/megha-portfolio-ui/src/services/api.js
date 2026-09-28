@@ -23,10 +23,10 @@ export const portfolioApi = {
         title: "Senior .NET & Backend Engineer",
         summary: "Results-driven Senior .NET & Backend Engineer with nearly 5 years of experience designing, developing, and scaling high-performance microservices, RESTful APIs, and distributed backend systems. Proficient in C#, .NET Core, Web API, .NET Framework, Multithreading (TPL), SQL Server, PostgreSQL, and MongoDB (NoSQL).",
         location: "Hyderabad, India",
-        email: "meghasyamreddy7@gmail.com",
+        email: "meghasyamreddy.dev@gmail.com",
         phone: "+91 9491364416",
         linkedInUrl: "https://www.linkedin.com/in/megha-syam-reddy-badhuri-79531914b",
-        gitHubUrl: "https://github.com/meghasyamreddy",
+        gitHubUrl: "https://github.com/Meghareddybad/MeghaPortfolio",
         yearsOfExperience: 5,
         latencyReductionMetric: "95% Processing Latency Reduction via TPL Concurrency",
         testCoverageMetric: "85%+ Automated Unit Test Coverage (NUnit/TDD)"
@@ -101,7 +101,7 @@ export const portfolioApi = {
           keyContribution: "Architected multi-service solution with YARP gateway, polyglot persistence, and binary magic byte upload security.",
           measurableResult: "100% NUnit test pass rate, sub-100ms API response time.",
           isFlagship: true,
-          gitHubUrl: "https://github.com/meghasyamreddy/SmartStore"
+          gitHubUrl: "https://github.com/Meghareddybad/MeghaPortfolio"
         }
       ];
     }

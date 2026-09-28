@@ -22,7 +22,7 @@ public static class PortfolioDataSeeder
                 Email = "meghasyamreddy.dev@gmail.com",
                 Phone = "+91 9491364416",
                 LinkedInUrl = "https://www.linkedin.com/in/megha-syam-reddy-badhuri-79531914b",
-                GitHubUrl = "https://github.com/meghasyamreddy",
+                GitHubUrl = "https://github.com/Meghareddybad/MeghaPortfolio",
                 YearsOfExperience = 5,
                 LatencyReductionMetric = "95% Processing Latency Reduction via TPL Concurrency",
                 TestCoverageMetric = "85%+ Automated Unit Test Coverage (NUnit/TDD)"
@@ -30,8 +30,9 @@ public static class PortfolioDataSeeder
         }
         else
         {
-            // Update email to preferred developer contact email
+            // Update email & GitHub URL to exact repository link
             existingProfile.Email = "meghasyamreddy.dev@gmail.com";
+            existingProfile.GitHubUrl = "https://github.com/Meghareddybad/MeghaPortfolio";
         }
 
         // 2. Seed Experience if empty
@@ -102,7 +103,7 @@ public static class PortfolioDataSeeder
                     KeyContribution = "Architected multi-service solution with YARP reverse proxy routing, polyglot persistence, Kafka event streaming, and binary magic byte security.",
                     MeasurableResult = "100% NUnit test suite pass rate, zero-downtime EF Core in-memory dev fallback, sub-100ms API response time.",
                     IsFlagship = true,
-                    GitHubUrl = "https://github.com/meghasyamreddy/SmartStore",
+                    GitHubUrl = "https://github.com/Meghareddybad/MeghaPortfolio",
                     LiveDemoUrl = null
                 },
                 new ProjectEntity
