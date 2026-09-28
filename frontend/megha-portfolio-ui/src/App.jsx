@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import Metrics from './components/Metrics';
+import About from './components/About';
 import Experience from './components/Experience';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
@@ -53,7 +53,7 @@ export default function App() {
       <Navbar />
       <main style={{ flex: 1 }}>
         <Hero profile={profile} />
-        <Metrics profile={profile} />
+        <About profile={profile} />
         <Experience experiences={experiences} />
         <Skills skills={skills} />
         <Projects projects={projects} />
