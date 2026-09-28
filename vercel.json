@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd frontend/megha-portfolio-ui && npm install && npm run build",
+  "outputDirectory": "frontend/megha-portfolio-ui/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
