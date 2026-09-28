@@ -47,6 +47,6 @@ public class ContactController : ControllerBase
         }
 
         var result = await _portfolioService.SubmitContactMessageAsync(request, cancellationToken);
-        return CreatedAtAction(nameof(SubmitMessage), new { id = result.Id }, result);
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 }
