@@ -3,7 +3,7 @@ import React from 'react';
 export default function Hero({ profile }) {
   return (
     <section id="hero" style={{ paddingTop: '160px', paddingBottom: '96px', position: 'relative' }}>
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '48px' }}>
+      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '48px', alignItems: 'center' }}>
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '9999px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', marginBottom: '24px' }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-emerald)' }}></span>
@@ -29,9 +29,33 @@ export default function Hero({ profile }) {
             <a href={profile?.linkedInUrl || "https://www.linkedin.com/in/megha-syam-reddy-badhuri-79531914b"} target="_blank" rel="noreferrer" className="btn btn-outline">
               LinkedIn Profile 🔗
             </a>
-            <a href={profile?.gitHubUrl || "https://github.com/meghasyamreddy"} target="_blank" rel="noreferrer" className="btn btn-outline">
+            <a href={profile?.gitHubUrl || "https://github.com/Meghareddybad/MeghaPortfolio"} target="_blank" rel="noreferrer" className="btn btn-outline">
               GitHub 💻
             </a>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div style={{
+            position: 'relative',
+            width: '280px',
+            height: '280px',
+            borderRadius: '50%',
+            padding: '5px',
+            background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-emerald))',
+            boxShadow: '0 20px 50px -10px rgba(59, 130, 246, 0.35)'
+          }}>
+            <img 
+              src="/profile.jpeg" 
+              alt={profile?.fullName || "Megha Syam Reddy Badhuri"} 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '50%',
+                border: '4px solid #0f172a'
+              }}
+            />
           </div>
         </div>
       </div>
