@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Base API configuration pointing to ASP.NET Core 9 Web API
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050/api';
+// Base API configuration pointing to production ASP.NET Core 9 Web API on Render
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://megha-portfolio-api-hbb8.onrender.com/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
