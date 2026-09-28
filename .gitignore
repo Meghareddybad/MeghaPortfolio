@@ -1,0 +1,35 @@
+# ==========================================
+# .NET / ASP.NET Core Ignore Rules
+# ==========================================
+bin/
+obj/
+out/
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.suo
+appsettings.Development.json
+appsettings.Production.json
+
+# ==========================================
+# Node.js / React Ignore Rules
+# ==========================================
+node_modules/
+dist/
+build/
+.cache/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.development.local
+.env.production.local
+
+# ==========================================
+# OS / IDE Generated
+# ==========================================
+.DS_Store
+Thumbs.db
