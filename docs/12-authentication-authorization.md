@@ -1,38 +1,32 @@
 # 12 — Authentication & Authorization
 
 ## Current Status
-> **Authentication & Authorization are currently NOT implemented.**
+> **JWT Bearer Authentication & Role-Based Access Control (RBAC) are FULLY IMPLEMENTED.**
 
 ---
 
 ## 1. Architectural Justification
-The current iteration of `MeghaPortfolio` is a **public-facing developer portfolio**. Its core purpose is to allow recruiters, engineering managers, and visitors to freely access information about candidate experience, technical skills, and featured projects without requiring user login or account creation.
-
-Exposing public `GET` endpoints ensures zero friction for recruiters reviewing Megha's resume.
-
----
-
-## 2. Protected Endpoints Security Strategy
-While user login authentication is omitted for read endpoints, the write endpoint `POST /api/contact` is protected by **ASP.NET Core Rate Limiting** (`FixedWindowLimiter`: Max 5 submissions/min per IP) to prevent spam abuse.
+`MeghaPortfolio` uses a hybrid access model:
+- **Public Endpoints (`GET /api/profile`, `GET /api/experience`, `GET /api/skills`, `GET /api/projects`, `POST /api/contact`)**: Open to recruiters and visitors for zero friction browsing. `POST /api/contact` is protected by ASP.NET Core Rate Limiting (5 submissions/min per IP).
+- **Admin Management Endpoints (`GET /api/contact`, `GET /api/contact/{id}`, `PATCH /api/contact/{id}/read`, `DELETE /api/contact/{id}`)**: Protected by JWT Bearer Authentication and `[Authorize(Roles = "Admin")]` attribute enforcement.
 
 ---
 
-## 3. Recommended Future Implementation (Planned for Admin CMS Dashboard)
-If an internal content management system (CMS) is added in the future to allow Megha to dynamically edit projects or read contact messages from an admin UI, the recommended authentication design will be:
+## 2. Authentication Flow
 
 ```text
 Admin User
    │
-   ├── POST /api/auth/login (Submits Email & Password)
+   ├── POST /api/auth/login (Submits Username & Password)
    │
-   └── ASP.NET Core AuthService
+   └── ASP.NET Core AuthController
           │
-          └── Generates Signed JWT Bearer Token (containing Role = "Admin" claim)
+          └── Generates Signed JWT Bearer Token (Claim: Role = "Admin", Expires in 8 Hours)
                  │
-                 └── Admin UI passes "Authorization: Bearer <Token>" in headers
+                 └── React Admin UI stores Token in localStorage & passes "Authorization: Bearer <Token>"
 ```
 
-### Planned Authentication Stack:
-* **JWT (JSON Web Tokens):** Claims-based stateless authentication.
-* **BCrypt.Net:** Salted password hashing.
-* **Role-Based Access Control (RBAC):** Controller enforcement via `[Authorize(Roles = "Admin")]`.
+### Authentication Stack:
+* **JWT (JSON Web Tokens):** Claims-based stateless authentication (`Microsoft.AspNetCore.Authentication.JwtBearer`).
+* **Symmetric HMAC SHA-256 Signing:** Signed using 256-bit secret key (`JWT_SECRET` environment variable).
+* **Role-Based Access Control (RBAC):** Controller endpoint enforcement via `[Authorize(Roles = "Admin")]`.
