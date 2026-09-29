@@ -1,6 +1,9 @@
+using System.Text;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MeghaPortfolio.API.Core.Application.Interfaces;
 using MeghaPortfolio.API.Core.Application.Services;
@@ -13,7 +16,37 @@ var builder = WebApplication.CreateBuilder(args);
 // 1. Add Controllers
 builder.Services.AddControllers();
 
-// 2. Configure Rate Limiting Policy (Security Against API Abuse / Spam)
+// 2. Configure JWT Authentication & Authorization
+var secretKey = builder.Configuration["Jwt:SecretKey"] 
+    ?? Environment.GetEnvironmentVariable("JWT_SECRET") 
+    ?? "SuperSecretKey_MeghaPortfolio_SeniorDotNetDeveloper_2026_SecureKey!";
+
+var keyBytes = Encoding.UTF8.GetBytes(secretKey);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "MeghaPortfolioAPI",
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"] ?? "MeghaPortfolioAdmin",
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+builder.Services.AddAuthorization();
+
+// 3. Configure Rate Limiting Policy (Security Against API Abuse / Spam)
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -26,7 +59,7 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
-// 3. Configure CORS Policy for React Frontend
+// 4. Configure CORS Policy for React Frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactFrontend", policy =>
@@ -56,7 +89,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 4. Add Custom Swagger / OpenAPI Metadata
+// 5. Add Custom Swagger / OpenAPI Metadata
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -72,9 +105,33 @@ builder.Services.AddSwaggerGen(options =>
             Url = new Uri("https://www.linkedin.com/in/megha-syam-reddy-badhuri-79531914b")
         }
     });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and your valid JWT token."
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
-// 5. Register Entity Framework Core DbContext (DbContext Lifetime: Scoped)
+// 6. Register Entity Framework Core DbContext (DbContext Lifetime: Scoped)
 var postgresConnectionString = builder.Configuration.GetConnectionString("PostgreSQL");
 
 if (!string.IsNullOrEmpty(postgresConnectionString))
@@ -89,29 +146,33 @@ else
         options.UseInMemoryDatabase("MeghaPortfolioDb"));
 }
 
-// 6. Register Application Layer Dependencies (SOLID - Dependency Inversion)
+// 7. Register Application Layer Dependencies (SOLID - Dependency Inversion)
 builder.Services.AddScoped<IPortfolioRepository, PortfolioRepository>();
 builder.Services.AddScoped<IPortfolioService, PortfolioService>();
 
 var app = builder.Build();
 
-// 7. Global Exception Handling Middleware (MUST BE FIRST!)
+// 8. Global Exception Handling Middleware (MUST BE FIRST!)
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-// 8. Enable CORS Middleware (MUST BE BEFORE Routing!)
+// 9. Enable CORS Middleware (MUST BE BEFORE Routing!)
 app.UseCors("AllowReactFrontend");
 
-// 9. Enable Rate Limiter Middleware
+// 10. Enable Authentication & Authorization Middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
+// 11. Enable Rate Limiter Middleware
 app.UseRateLimiter();
 
-// 10. Seed Database on Application Startup
+// 12. Seed Database on Application Startup
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<PortfolioDbContext>();
     PortfolioDataSeeder.SeedData(dbContext);
 }
 
-// 11. Configure HTTP Request Pipeline
+// 13. Configure HTTP Request Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -123,7 +184,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

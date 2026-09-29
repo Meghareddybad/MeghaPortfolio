@@ -97,8 +97,53 @@ public class PortfolioService : IPortfolioService
             Subject = savedEntity.Subject,
             Message = savedEntity.Message,
             CreatedAt = savedEntity.CreatedAt,
+            IsRead = savedEntity.IsRead,
             Status = "Message Received Successfully"
         };
+    }
+
+    public async Task<IEnumerable<ContactMessageResponseDto>> GetContactMessagesAsync(CancellationToken cancellationToken = default)
+    {
+        var entities = await _repository.GetContactMessagesAsync(cancellationToken);
+        return entities.Select(e => new ContactMessageResponseDto
+        {
+            Id = e.Id,
+            SenderName = e.SenderName,
+            SenderEmail = e.SenderEmail,
+            Subject = e.Subject,
+            Message = e.Message,
+            CreatedAt = e.CreatedAt,
+            IsRead = e.IsRead,
+            Status = e.IsRead ? "Read" : "Unread"
+        });
+    }
+
+    public async Task<ContactMessageResponseDto?> GetContactMessageByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var entity = await _repository.GetContactMessageByIdAsync(id, cancellationToken);
+        if (entity == null) return null;
+
+        return new ContactMessageResponseDto
+        {
+            Id = entity.Id,
+            SenderName = entity.SenderName,
+            SenderEmail = entity.SenderEmail,
+            Subject = entity.Subject,
+            Message = entity.Message,
+            CreatedAt = entity.CreatedAt,
+            IsRead = entity.IsRead,
+            Status = entity.IsRead ? "Read" : "Unread"
+        };
+    }
+
+    public async Task<bool> UpdateContactMessageReadStatusAsync(int id, bool isRead, CancellationToken cancellationToken = default)
+    {
+        return await _repository.UpdateContactMessageReadStatusAsync(id, isRead, cancellationToken);
+    }
+
+    public async Task<bool> DeleteContactMessageAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _repository.DeleteContactMessageAsync(id, cancellationToken);
     }
 
     private static ProjectDto MapProjectToDto(ProjectEntity entity) => new()

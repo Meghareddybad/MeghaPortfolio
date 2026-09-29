@@ -6,6 +6,7 @@ import Experience from './components/Experience';
 import Skills from './components/Skills';
 import Projects from './components/Projects';
 import ContactForm from './components/ContactForm';
+import AdminDashboard from './components/AdminDashboard';
 import Footer from './components/Footer';
 import { portfolioApi } from './services/api';
 
@@ -15,6 +16,7 @@ export default function App() {
   const [skills, setSkills] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +52,7 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Navbar />
+      <Navbar onOpenAdmin={() => setIsAdminOpen(true)} />
       <main style={{ flex: 1 }}>
         <Hero profile={profile} />
         <About profile={profile} />
@@ -59,7 +61,12 @@ export default function App() {
         <Projects projects={projects} />
         <ContactForm />
       </main>
-      <Footer />
+      <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+
+      <AdminDashboard 
+        isOpen={isAdminOpen} 
+        onClose={() => setIsAdminOpen(false)} 
+      />
     </div>
   );
 }

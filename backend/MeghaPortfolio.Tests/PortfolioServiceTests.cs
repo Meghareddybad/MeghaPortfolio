@@ -107,4 +107,43 @@ public class PortfolioServiceTests
         Assert.That(response.SenderEmail, Is.EqualTo("hiring@enterprise.com"));
         Assert.That(response.Status, Is.EqualTo("Message Received Successfully"));
     }
+
+    [Test]
+    public async Task GetContactMessagesAsync_ShouldReturnMessagesListForAdmin()
+    {
+        // Arrange
+        var messages = new List<ContactMessageEntity>
+        {
+            new ContactMessageEntity { Id = 1, SenderName = "Recruiter A", SenderEmail = "a@test.com", Subject = "Job 1", Message = "Message 1", IsRead = false, CreatedAt = DateTime.UtcNow },
+            new ContactMessageEntity { Id = 2, SenderName = "Recruiter B", SenderEmail = "b@test.com", Subject = "Job 2", Message = "Message 2", IsRead = true, CreatedAt = DateTime.UtcNow.AddHours(-1) }
+        };
+
+        _mockRepo.Setup(r => r.GetContactMessagesAsync(It.IsAny<CancellationToken>()))
+                 .ReturnsAsync(messages);
+
+        // Act
+        var results = await _service.GetContactMessagesAsync();
+
+        // Assert
+        Assert.That(results, Is.Not.Null);
+        var messageList = results.ToList();
+        Assert.That(messageList.Count, Is.EqualTo(2));
+        Assert.That(messageList.First().SenderName, Is.EqualTo("Recruiter A"));
+        Assert.That(messageList.First().IsRead, Is.False);
+    }
+
+    [Test]
+    public async Task UpdateContactMessageReadStatusAsync_ShouldReturnTrue_WhenMessageExists()
+    {
+        // Arrange
+        _mockRepo.Setup(r => r.UpdateContactMessageReadStatusAsync(1, true, It.IsAny<CancellationToken>()))
+                 .ReturnsAsync(true);
+
+        // Act
+        var result = await _service.UpdateContactMessageReadStatusAsync(1, true);
+
+        // Assert
+        Assert.That(result, Is.True);
+        _mockRepo.Verify(r => r.UpdateContactMessageReadStatusAsync(1, true, It.IsAny<CancellationToken>()), Times.Once);
+    }
 }

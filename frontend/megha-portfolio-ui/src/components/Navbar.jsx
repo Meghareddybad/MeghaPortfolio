@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Navbar() {
+export default function Navbar({ onOpenAdmin }) {
   const [scrolled, setScrolled] = useState(false);
 
   React.useEffect(() => {
@@ -29,12 +29,17 @@ export default function Navbar() {
           <img src="/profile.jpeg" alt="Megha" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-blue)' }} />
           <span>MEGHA<span style={{ color: 'var(--accent-blue)' }}>.DEV</span></span>
         </a>
-        <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
           <a href="#about" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500 }}>About</a>
           <a href="#experience" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500 }}>Experience</a>
           <a href="#skills" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500 }}>Skills</a>
           <a href="#projects" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontWeight: 500 }}>Projects</a>
           <a href="#contact" className="btn btn-primary" style={{ padding: '8px 20px', fontSize: '0.85rem' }}>Contact Me</a>
+          {onOpenAdmin && (
+            <button onClick={onOpenAdmin} className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '0.8rem', borderColor: 'rgba(59, 130, 246, 0.4)' }} title="Admin Messages Portal">
+              🛡️ Admin
+            </button>
+          )}
         </div>
       </div>
     </nav>

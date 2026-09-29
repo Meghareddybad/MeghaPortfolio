@@ -8,7 +8,14 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000,
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('adminToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export const portfolioApi = {
@@ -109,6 +116,40 @@ export const portfolioApi = {
 
   submitContactMessage: async (formData) => {
     const response = await apiClient.post('/contact', formData);
+    return response.data;
+  },
+
+  login: async (username, password) => {
+    const response = await apiClient.post('/auth/login', { username, password });
+    if (response.data?.token) {
+      localStorage.setItem('adminToken', response.data.token);
+    }
+    return response.data;
+  },
+
+  logout: () => {
+    localStorage.removeItem('adminToken');
+  },
+
+  getContactMessages: async () => {
+    const response = await apiClient.get('/contact');
+    return response.data;
+  },
+
+  getContactMessageById: async (id) => {
+    const response = await apiClient.get(`/contact/${id}`);
+    return response.data;
+  },
+
+  updateContactMessageReadStatus: async (id, isRead) => {
+    const response = await apiClient.patch(`/contact/${id}/read`, isRead, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return response.data;
+  },
+
+  deleteContactMessage: async (id) => {
+    const response = await apiClient.delete(`/contact/${id}`);
     return response.data;
   }
 };

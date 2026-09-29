@@ -57,4 +57,37 @@ public class PortfolioRepository : IPortfolioRepository
         await _context.SaveChangesAsync(cancellationToken);
         return entity;
     }
+
+    public async Task<IEnumerable<ContactMessageEntity>> GetContactMessagesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.ContactMessages
+            .AsNoTracking()
+            .OrderByDescending(c => c.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<ContactMessageEntity?> GetContactMessageByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _context.ContactMessages
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+    }
+
+    public async Task<bool> UpdateContactMessageReadStatusAsync(int id, bool isRead, CancellationToken cancellationToken = default)
+    {
+        var message = await _context.ContactMessages.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        if (message == null) return false;
+        message.IsRead = isRead;
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> DeleteContactMessageAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var message = await _context.ContactMessages.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        if (message == null) return false;
+        _context.ContactMessages.Remove(message);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 }
