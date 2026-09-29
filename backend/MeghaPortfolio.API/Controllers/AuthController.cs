@@ -33,7 +33,7 @@ public class AuthController : ControllerBase
             
         var expectedPassword = _configuration["AdminSettings:Password"] 
             ?? Environment.GetEnvironmentVariable("ADMIN_PASSWORD") 
-            ?? "MeghaPortfolio_Admin2026_SecureKey!#9876";
+            ?? "Admin@2026";
 
         if (request.Username != expectedUsername || request.Password != expectedPassword)
         {
