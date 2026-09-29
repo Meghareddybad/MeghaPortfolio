@@ -180,7 +180,7 @@ export default function AdminDashboard({ isOpen, onClose }) {
                 <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🔐</div>
                 <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff' }}>Administrator Authentication</h4>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  Default Credentials: <code>admin</code> / <code>Admin@12345</code>
+                  Sign in with your server-configured administrator credentials.
                 </p>
               </div>
 
